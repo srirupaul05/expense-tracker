@@ -1,22 +1,15 @@
 :root {
-  --bg: #f6f7fb;
-  --card: #ffffff;
-  --text: #1b1d2a;
-  --muted: #6b7280;
-  --primary: #4f46e5;
-  --border: #e5e7eb;
-  --soft: #eef2ff;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1117;
-    --card: #181b25;
-    --text: #f1f2f6;
-    --muted: #9aa0ae;
-    --primary: #818cf8;
-    --border: #2a2e3b;
-    --soft: #232743;
-  }
+  --bg: #fdf6ec;
+  --card: #fffdf9;
+  --text: #4a3636;
+  --muted: #947d75;
+  --primary: #e0668b;
+  --primary-dark: #c9507a;
+  --soft: #fdeaf0;
+  --border: #f3e3d5;
+  --green: #4f9a78;
+  --red: #d6506f;
+  color-scheme: light;
 }
 * {
   box-sizing: border-box;
@@ -42,6 +35,7 @@ body {
 .app-title {
   margin: 8px 0 16px;
   font-size: 26px;
+  color: var(--primary-dark);
 }
 h2 {
   margin: 0 0 12px;
@@ -50,9 +44,10 @@ h2 {
 .card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 16px;
   margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(224, 102, 139, 0.07);
 }
 .muted {
   color: var(--muted);
@@ -63,7 +58,52 @@ h2 {
   font-weight: 700;
   margin: 4px 0;
 }
+.pos {
+  color: var(--green);
+}
+.neg {
+  color: var(--red);
+}
 
+/* Balance card */
+.hero {
+  background: linear-gradient(135deg, #e0668b, #f09ab3);
+  color: #fff;
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(224, 102, 139, 0.25);
+}
+.hero-label {
+  margin: 0;
+  opacity: 0.92;
+  font-size: 14px;
+}
+.hero-amount {
+  margin: 4px 0 14px;
+  font-size: 38px;
+  font-weight: 800;
+}
+.hero-row {
+  display: flex;
+  gap: 12px;
+}
+.hero-row > div {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  padding: 10px;
+}
+.hero-row small {
+  display: block;
+  opacity: 0.95;
+  font-size: 12px;
+}
+.hero-row b {
+  font-size: 16px;
+}
+
+/* Forms */
 .amount-row {
   display: flex;
   align-items: center;
@@ -71,6 +111,7 @@ h2 {
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 12px;
+  color: var(--primary-dark);
 }
 .amount-row input {
   flex: 1;
@@ -90,7 +131,7 @@ h2 {
 }
 .chip {
   border: 1px solid var(--border);
-  background: transparent;
+  background: #fff;
   color: var(--text);
   padding: 8px 12px;
   border-radius: 999px;
@@ -106,9 +147,9 @@ h2 {
   width: 100%;
   padding: 12px;
   margin-bottom: 10px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid var(--border);
-  background: transparent;
+  background: #fff;
   color: var(--text);
   font-size: 16px;
 }
@@ -116,7 +157,7 @@ h2 {
   width: 100%;
   padding: 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--primary);
   color: #fff;
   font-size: 16px;
@@ -126,56 +167,164 @@ h2 {
 .primary:active {
   transform: scale(0.98);
 }
+.ghost {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px dashed var(--primary);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--primary-dark);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
 .link {
   background: none;
   border: none;
-  color: var(--primary);
+  color: var(--primary-dark);
   cursor: pointer;
   font-size: 14px;
 }
 
+/* Tabs */
 .tabs {
   display: flex;
   background: var(--soft);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 .tabs button {
   flex: 1;
-  padding: 8px;
+  padding: 9px;
   border: none;
   background: transparent;
   color: var(--text);
-  border-radius: 9px;
+  border-radius: 11px;
   font-size: 15px;
   cursor: pointer;
 }
 .tabs button.active {
   background: var(--primary);
   color: #fff;
-}
-.bar-row {
-  margin-top: 14px;
-}
-.bar-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-.bar {
-  height: 8px;
-  background: var(--soft);
-  border-radius: 99px;
-  overflow: hidden;
-}
-.bar > div {
-  height: 100%;
-  background: var(--primary);
-  border-radius: 99px;
-  transition: width 0.3s;
+  font-weight: 600;
 }
 
+/* Summary stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 10px 0 4px;
+}
+.stats > div {
+  background: var(--soft);
+  border-radius: 14px;
+  padding: 10px;
+}
+.stats small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.stats b {
+  font-size: 15px;
+}
+.section-title {
+  margin: 18px 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* Donut chart */
+.donut-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.donut {
+  width: 180px;
+  height: 180px;
+}
+.donut-label {
+  font-size: 8px;
+  fill: var(--muted);
+}
+.donut-total {
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--text);
+}
+.legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+.legend li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.legend .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend .name {
+  flex: 1;
+}
+.legend em {
+  width: 100%;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+}
+
+/* Trend chart */
+.trend {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 120px;
+}
+.trend-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+}
+.trend-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.trend-bar {
+  width: 100%;
+  background: var(--primary);
+  border-radius: 6px 6px 2px 2px;
+  min-height: 2px;
+}
+.trend-bar.zero {
+  background: var(--border);
+}
+.trend-label {
+  font-size: 10px;
+  color: var(--muted);
+  height: 14px;
+  margin-top: 4px;
+}
+
+/* Alerts */
 .alert {
   border-color: var(--primary);
   background: var(--soft);
@@ -184,6 +333,9 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.alert .stats > div {
+  background: #fff;
 }
 .breakdown {
   list-style: none;
@@ -200,8 +352,10 @@ h2 {
   width: 100%;
   color: var(--muted);
   font-size: 13px;
+  font-style: normal;
 }
 
+/* Lists */
 .date-head {
   margin: 14px 0 6px;
   color: var(--muted);
@@ -229,4 +383,9 @@ h2 {
   font-size: 16px;
   cursor: pointer;
   padding: 6px;
+}
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 10px;
 }

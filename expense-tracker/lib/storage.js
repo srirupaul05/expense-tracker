@@ -1,6 +1,11 @@
 const KEY = "spendly:v1";
 
-const empty = () => ({ expenses: [], meta: { dismissed: [], notified: [] } });
+const empty = () => ({
+  expenses: [],
+  incomes: [],
+  recurring: [],
+  meta: { dismissed: [], notified: [], generated: [] },
+});
 
 export function loadData() {
   try {
@@ -9,9 +14,12 @@ export function loadData() {
       const d = JSON.parse(raw);
       return {
         expenses: d.expenses || [],
+        incomes: d.incomes || [],
+        recurring: d.recurring || [],
         meta: {
           dismissed: d.meta?.dismissed || [],
           notified: d.meta?.notified || [],
+          generated: d.meta?.generated || [],
         },
       };
     }

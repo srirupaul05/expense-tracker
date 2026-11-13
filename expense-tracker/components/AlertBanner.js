@@ -2,6 +2,7 @@
 import { fmt } from "../lib/utils";
 
 export default function AlertBanner({ alert, onDismiss }) {
+  const s = alert.summary;
   return (
     <div className="card alert">
       <div className="alert-head">
@@ -10,9 +11,24 @@ export default function AlertBanner({ alert, onDismiss }) {
           Dismiss
         </button>
       </div>
-      <p className="big">{fmt(alert.summary.total)}</p>
+
+      <div className="stats">
+        <div>
+          <small>Earned</small>
+          <b className="pos">{fmt(alert.income)}</b>
+        </div>
+        <div>
+          <small>Spent</small>
+          <b className="neg">{fmt(s.total)}</b>
+        </div>
+        <div>
+          <small>Balance</small>
+          <b>{fmt(alert.balance)}</b>
+        </div>
+      </div>
+
       <ul className="breakdown">
-        {alert.summary.items.map((i) => (
+        {s.items.map((i) => (
           <li key={i.id}>
             <span>
               {i.emoji} {i.label}

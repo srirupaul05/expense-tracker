@@ -12,8 +12,8 @@ export function GET(req, { params }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#4f46e5",
-        color: "#ffffff",
+        background: "#e0668b",
+        color: "#fff7ec",
         fontSize: size * 0.55,
         fontWeight: 700,
       }}

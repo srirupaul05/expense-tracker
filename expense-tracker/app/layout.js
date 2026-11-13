@@ -3,13 +3,15 @@ import RegisterSW from "../components/RegisterSW";
 
 export const metadata = {
   title: "Spendly – Expense Tracker",
-  description: "Track daily expenses and get weekly and monthly reports.",
+  description:
+    "Track daily expenses and income, and get weekly and monthly reports.",
   appleWebApp: { capable: true, title: "Spendly", statusBarStyle: "default" },
   icons: { apple: "/icons/180" },
 };
 
 export const viewport = {
-  themeColor: "#4f46e5",
+  themeColor: "#fdf6ec",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

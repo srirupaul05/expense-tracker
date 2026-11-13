@@ -2,11 +2,12 @@ export default function manifest() {
   return {
     name: "Spendly – Expense Tracker",
     short_name: "Spendly",
-    description: "Track daily expenses and get weekly and monthly reports.",
+    description:
+      "Track daily expenses and income, and get weekly and monthly reports.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f6f7fb",
-    theme_color: "#4f46e5",
+    background_color: "#fdf6ec",
+    theme_color: "#fdf6ec",
     icons: [
       { src: "/icons/192", sizes: "192x192", type: "image/png" },
       {
