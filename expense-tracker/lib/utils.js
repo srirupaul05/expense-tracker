@@ -1,11 +1,11 @@
 export const CATEGORIES = [
-  { id: "food", label: "Food", emoji: "🍔", color: "#f08a7e" },
-  { id: "travel", label: "Travel", emoji: "🚌", color: "#f2b36d" },
-  { id: "shopping", label: "Shopping", emoji: "🛍️", color: "#e0668b" },
-  { id: "bills", label: "Bills", emoji: "💡", color: "#c9a24d" },
-  { id: "fun", label: "Fun", emoji: "🎬", color: "#b784c9" },
-  { id: "study", label: "Study", emoji: "📚", color: "#7fa7d8" },
-  { id: "health", label: "Health", emoji: "💊", color: "#7dbf9e" },
+  { id: "food", label: "Food", color: "#f08a7e" },
+  { id: "travel", label: "Travel", color: "#f2b36d" },
+  { id: "shopping", label: "Shopping", color: "#e0668b" },
+  { id: "bills", label: "Bills", color: "#c9a24d" },
+  { id: "fun", label: "Fun", color: "#b784c9" },
+  { id: "study", label: "Study", color: "#7fa7d8" },
+  { id: "health", label: "Health", color: "#7dbf9e" },
   { id: "other", label: "Other", color: "#b8a398" },
 ];
 
