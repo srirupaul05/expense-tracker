@@ -4,6 +4,7 @@ const empty = () => ({
   expenses: [],
   incomes: [],
   recurring: [],
+  prefs: {},
   meta: { dismissed: [], notified: [], generated: [] },
 });
 
@@ -16,6 +17,7 @@ export function loadData() {
         expenses: d.expenses || [],
         incomes: d.incomes || [],
         recurring: d.recurring || [],
+        prefs: d.prefs || {},
         meta: {
           dismissed: d.meta?.dismissed || [],
           notified: d.meta?.notified || [],

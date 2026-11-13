@@ -1,33 +1,31 @@
 "use client";
 import { useEffect, useState } from "react";
-import ExpenseForm from "../components/ExpenseForm";
-import IncomeForm from "../components/IncomeForm";
-import RecurringManager from "../components/RecurringManager";
+import Wordmark from "../components/Wordmark";
+import TabBar from "../components/TabBar";
+import AddSheet from "../components/AddSheet";
+import HomeView from "../components/HomeView";
 import Summary from "../components/Summary";
 import History from "../components/History";
-import AlertBanner from "../components/AlertBanner";
+import MoreView from "../components/MoreView";
 import { loadData, saveData } from "../lib/storage";
-import {
-  addDays,
-  applyRecurring,
-  balanceBefore,
-  buildAlerts,
-  fmt,
-  inRange,
-  notify,
-  sumAmount,
-} from "../lib/utils";
+import { applyRecurring, buildAlerts, notify } from "../lib/utils";
 
-export default function Home() {
+export default function App() {
   const [data, setData] = useState(null);
   const [alerts, setAlerts] = useState([]);
-  const [perm, setPerm] = useState("granted");
-  const [addTab, setAddTab] = useState("expense");
+  const [perm, setPerm] = useState("default");
+  const [tab, setTab] = useState("home");
+  const [sheet, setSheet] = useState(false);
+  const [toast, setToast] = useState(null);
 
   // Load saved data and create any recurring expenses that are due
   useEffect(() => {
     setData(applyRecurring(loadData()));
-    if (typeof Notification !== "undefined") setPerm(Notification.permission);
+    setPerm(
+      typeof Notification === "undefined"
+        ? "unsupported"
+        : Notification.permission,
+    );
   }, []);
 
   // Save on every change
@@ -55,17 +53,66 @@ export default function Home() {
     }
   }, [data?.expenses, data?.incomes, data?.meta.dismissed]);
 
+  // Hide the toast after a few seconds
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   const commit = (fn) => setData((d) => applyRecurring(fn(d)));
 
-  const addExpense = (e) =>
-    commit((d) => ({ ...d, expenses: [e, ...d.expenses] }));
-  const deleteExpense = (id) =>
-    commit((d) => ({ ...d, expenses: d.expenses.filter((e) => e.id !== id) }));
+  const addExpense = (e) => {
+    commit((d) => ({
+      ...d,
+      expenses: [e, ...d.expenses],
+      prefs: { ...d.prefs, lastCategory: e.category },
+    }));
+    setToast({
+      message: "Expense added",
+      undo: () =>
+        commit((d) => ({
+          ...d,
+          expenses: d.expenses.filter((x) => x.id !== e.id),
+        })),
+    });
+  };
 
-  const addIncome = (i) =>
-    commit((d) => ({ ...d, incomes: [i, ...d.incomes] }));
-  const deleteIncome = (id) =>
+  const addIncome = (i) => {
+    commit((d) => ({
+      ...d,
+      incomes: [i, ...d.incomes],
+      prefs: { ...d.prefs, lastIncomeType: i.type },
+    }));
+    setToast({
+      message: "Income added",
+      undo: () =>
+        commit((d) => ({
+          ...d,
+          incomes: d.incomes.filter((x) => x.id !== i.id),
+        })),
+    });
+  };
+
+  const deleteExpense = (id) => {
+    const item = data.expenses.find((e) => e.id === id);
+    if (!item) return;
+    commit((d) => ({ ...d, expenses: d.expenses.filter((e) => e.id !== id) }));
+    setToast({
+      message: "Expense deleted",
+      undo: () => commit((d) => ({ ...d, expenses: [item, ...d.expenses] })),
+    });
+  };
+
+  const deleteIncome = (id) => {
+    const item = data.incomes.find((i) => i.id === id);
+    if (!item) return;
     commit((d) => ({ ...d, incomes: d.incomes.filter((i) => i.id !== id) }));
+    setToast({
+      message: "Income deleted",
+      undo: () => commit((d) => ({ ...d, incomes: [item, ...d.incomes] })),
+    });
+  };
 
   const addRecurring = (r) =>
     commit((d) => ({ ...d, recurring: [r, ...d.recurring] }));
@@ -88,82 +135,78 @@ export default function Home() {
 
   if (!data) return null;
 
-  const now = new Date();
-  const balance = balanceBefore(data.expenses, data.incomes, addDays(now, 1));
-  const ms = new Date(now.getFullYear(), now.getMonth(), 1);
-  const me = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  const monthIncome = sumAmount(data.incomes.filter((e) => inRange(e, ms, me)));
-  const monthExpense = sumAmount(
-    data.expenses.filter((e) => inRange(e, ms, me)),
-  );
-  const monthName = now.toLocaleString("en-IN", { month: "long" });
-
   return (
-    <main className="app">
-      <h1 className="app-title">💸 Spendly</h1>
-
-      <div className="hero">
-        <p className="hero-label">Total balance</p>
-        <p className="hero-amount">{fmt(balance)}</p>
-        <div className="hero-row">
-          <div>
-            <small>Earned in {monthName}</small>
-            <b>{fmt(monthIncome)}</b>
-          </div>
-          <div>
-            <small>Spent in {monthName}</small>
-            <b>{fmt(monthExpense)}</b>
-          </div>
-        </div>
+    <div className="shell">
+      <div className="bg">
+        <i className="blob b1" />
+        <i className="blob b2" />
+        <i className="blob b3" />
       </div>
 
-      {perm === "default" && (
-        <div className="card">
-          <p style={{ margin: "0 0 10px" }}>
-            Get your weekly and monthly reports as phone notifications.
-          </p>
-          <button className="primary" onClick={enableNotifications}>
-            Turn on notifications
-          </button>
+      <header className="topbar">
+        <Wordmark />
+      </header>
+
+      <main className="content">
+        {tab === "home" && (
+          <HomeView
+            expenses={data.expenses}
+            incomes={data.incomes}
+            alert={alerts[0]}
+            alertCount={alerts.length}
+            onDismiss={dismiss}
+            onSeeAll={() => setTab("history")}
+          />
+        )}
+        {tab === "reports" && (
+          <Summary expenses={data.expenses} incomes={data.incomes} />
+        )}
+        {tab === "history" && (
+          <History
+            expenses={data.expenses}
+            incomes={data.incomes}
+            onDeleteExpense={deleteExpense}
+            onDeleteIncome={deleteIncome}
+          />
+        )}
+        {tab === "more" && (
+          <MoreView
+            perm={perm}
+            onEnable={enableNotifications}
+            recurring={data.recurring}
+            onAddRecurring={addRecurring}
+            onDeleteRecurring={deleteRecurring}
+          />
+        )}
+      </main>
+
+      <TabBar tab={tab} onTab={setTab} onAdd={() => setSheet(true)} />
+
+      {sheet && (
+        <AddSheet
+          prefs={data.prefs}
+          onAddExpense={addExpense}
+          onAddIncome={addIncome}
+          onClose={() => setSheet(false)}
+        />
+      )}
+
+      {toast && (
+        <div className="toast glass">
+          <span>{toast.message}</span>
+          {toast.undo && (
+            <button
+              className="link"
+              onClick={() => {
+                toast.undo();
+                setToast(null);
+              }}
+            >
+              Undo
+            </button>
+          )}
         </div>
       )}
-
-      {alerts.map((a) => (
-        <AlertBanner key={a.id} alert={a} onDismiss={dismiss} />
-      ))}
-
-      <div className="tabs">
-        <button
-          className={addTab === "expense" ? "active" : ""}
-          onClick={() => setAddTab("expense")}
-        >
-          − Expense
-        </button>
-        <button
-          className={addTab === "income" ? "active" : ""}
-          onClick={() => setAddTab("income")}
-        >
-          + Income
-        </button>
-      </div>
-      {addTab === "expense" ? (
-        <ExpenseForm onAdd={addExpense} />
-      ) : (
-        <IncomeForm onAdd={addIncome} />
-      )}
-
-      <Summary expenses={data.expenses} incomes={data.incomes} />
-      <RecurringManager
-        recurring={data.recurring}
-        onAdd={addRecurring}
-        onDelete={deleteRecurring}
-      />
-      <History
-        expenses={data.expenses}
-        incomes={data.incomes}
-        onDeleteExpense={deleteExpense}
-        onDeleteIncome={deleteIncome}
-      />
-    </main>
+    </div>
   );
 }

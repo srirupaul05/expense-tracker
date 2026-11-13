@@ -1,21 +1,21 @@
 export const CATEGORIES = [
-  { id: "food", label: "Food", color: "#f08a7e" },
-  { id: "travel", label: "Travel", color: "#f2b36d" },
-  { id: "shopping", label: "Shopping", color: "#e0668b" },
-  { id: "bills", label: "Bills", color: "#c9a24d" },
-  { id: "fun", label: "Fun", color: "#b784c9" },
-  { id: "study", label: "Study", color: "#7fa7d8" },
-  { id: "health", label: "Health", color: "#7dbf9e" },
-  { id: "other", label: "Other", color: "#b8a398" },
+  { id: "food", label: "Food", icon: "coffee", color: "#f08a7e" },
+  { id: "travel", label: "Travel", icon: "pin", color: "#f2b36d" },
+  { id: "shopping", label: "Shopping", icon: "bag", color: "#e0668b" },
+  { id: "bills", label: "Bills", icon: "zap", color: "#c9a24d" },
+  { id: "fun", label: "Fun", icon: "film", color: "#b784c9" },
+  { id: "study", label: "Study", icon: "book", color: "#7fa7d8" },
+  { id: "health", label: "Health", icon: "heart", color: "#7dbf9e" },
+  { id: "other", label: "Other", icon: "dots", color: "#b8a398" },
 ];
 
 export const INCOME_TYPES = [
-  { id: "pocket", label: "Pocket money" },
-  { id: "salary", label: "Salary" },
-  { id: "freelance", label: "Freelance" },
-  { id: "scholarship", label: "Scholarship" },
-  { id: "gift", label: "Gift" },
-  { id: "other", label: "Other" },
+  { id: "pocket", label: "Pocket money", icon: "card" },
+  { id: "salary", label: "Salary", icon: "briefcase" },
+  { id: "freelance", label: "Freelance", icon: "monitor" },
+  { id: "scholarship", label: "Scholarship", icon: "award" },
+  { id: "gift", label: "Gift", icon: "gift" },
+  { id: "other", label: "Other", icon: "dots" },
 ];
 
 export const catOf = (id) =>
@@ -133,6 +133,7 @@ function periodAlert(
     body:
       `${intro}: earned ${fmt(income)}, spent ${fmt(s.total)}. Balance ${fmt(balance)}.` +
       (top ? ` Spent on: ${top}` : ""),
+    top,
     income,
     balance,
     summary: s,
@@ -149,7 +150,7 @@ export function buildAlerts(expenses, incomes, now = new Date()) {
   const lastWs = addDays(ws, -7);
   const week = periodAlert(
     `week-${toDateStr(lastWs)}`,
-    "📅 Your weekly report",
+    "Your weekly report",
     "Last week",
     expenses,
     incomes,
@@ -164,7 +165,7 @@ export function buildAlerts(expenses, incomes, now = new Date()) {
   const lastMs = new Date(y, m - 1, 1);
   const month = periodAlert(
     `month-${lastMs.getFullYear()}-${lastMs.getMonth() + 1}`,
-    "🗓️ Your monthly report",
+    "Your monthly report",
     "Last month",
     expenses,
     incomes,
@@ -180,7 +181,7 @@ export function buildAlerts(expenses, incomes, now = new Date()) {
     const me = new Date(y, m + 1, 1);
     const monthEnd = periodAlert(
       `monthend-${y}-${m + 1}`,
-      "⏰ Month-end check-in",
+      "Month-end check-in",
       "This month",
       expenses,
       incomes,

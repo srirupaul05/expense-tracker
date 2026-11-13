@@ -1,5 +1,53 @@
 "use client";
+import { Icon } from "./Icons";
 import { catOf, fmt, incomeOf, parseDate } from "../lib/utils";
+
+// Expenses and income in one list, newest date first
+export function mergeTx(expenses, incomes) {
+  return [
+    ...expenses.map((e) => ({ ...e, kind: "expense" })),
+    ...incomes.map((i) => ({ ...i, kind: "income" })),
+  ].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+}
+
+export function TxRow({ item, onDelete, showDate }) {
+  const income = item.kind === "income";
+  const meta = income ? incomeOf(item.type) : catOf(item.category);
+  const color = income ? "#4f9a78" : meta.color;
+  const dateText = parseDate(item.date).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+  });
+
+  return (
+    <div className="row">
+      <span className="avatar" style={{ background: color + "26", color }}>
+        <Icon name={meta.icon} size={18} />
+      </span>
+      <div className="grow">
+        <div className="row-title">{item.note || meta.label}</div>
+        <small className="muted">
+          {meta.label}
+          {item.auto ? " · Recurring" : ""}
+          {showDate ? ` · ${dateText}` : ""}
+        </small>
+      </div>
+      <b className={income ? "pos" : "neg"}>
+        {income ? "+" : "−"}
+        {fmt(item.amount)}
+      </b>
+      {onDelete && (
+        <button
+          className="iconbtn"
+          aria-label="Delete"
+          onClick={() => onDelete(item.id)}
+        >
+          <Icon name="trash" size={18} />
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function History({
   expenses,
@@ -7,64 +55,40 @@ export default function History({
   onDeleteExpense,
   onDeleteIncome,
 }) {
-  const all = [
-    ...expenses.map((e) => ({ ...e, kind: "expense" })),
-    ...incomes.map((i) => ({ ...i, kind: "income" })),
-  ]
-    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
-    .slice(0, 100);
-
+  const all = mergeTx(expenses, incomes).slice(0, 100);
   const groups = {};
   for (const e of all) (groups[e.date] ||= []).push(e);
 
   return (
-    <div className="card">
-      <h2>History</h2>
-      {all.length === 0 && (
-        <p className="muted">
-          Nothing yet. Add your first expense or income above.
-        </p>
-      )}
-      {Object.entries(groups).map(([date, list]) => (
-        <div key={date}>
-          <p className="date-head">
-            {parseDate(date).toLocaleDateString("en-IN", {
-              weekday: "short",
-              day: "numeric",
-              month: "short",
-            })}
+    <div className="view">
+      <h2 className="view-title">History</h2>
+      <section className="glass card">
+        {all.length === 0 && (
+          <p className="muted">
+            Nothing yet. Tap the + button to add your first entry.
           </p>
-          {list.map((e) => {
-            const isIncome = e.kind === "income";
-            const meta = isIncome ? incomeOf(e.type) : catOf(e.category);
-            return (
-              <div className="row" key={`${e.kind}-${e.id}`}>
-                <span className="emoji">{meta.emoji}</span>
-                <div className="grow">
-                  <div>{e.note || meta.label}</div>
-                  <small className="muted">
-                    {meta.label}
-                    {e.auto ? " · 🔁 recurring" : ""}
-                  </small>
-                </div>
-                <b className={isIncome ? "pos" : "neg"}>
-                  {isIncome ? "+" : "−"}
-                  {fmt(e.amount)}
-                </b>
-                <button
-                  className="del"
-                  aria-label="Delete"
-                  onClick={() =>
-                    isIncome ? onDeleteIncome(e.id) : onDeleteExpense(e.id)
-                  }
-                >
-                  ✕
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      ))}
+        )}
+        {Object.entries(groups).map(([date, list]) => (
+          <div key={date}>
+            <p className="date-head">
+              {parseDate(date).toLocaleDateString("en-IN", {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+              })}
+            </p>
+            {list.map((item) => (
+              <TxRow
+                key={`${item.kind}-${item.id}`}
+                item={item}
+                onDelete={
+                  item.kind === "income" ? onDeleteIncome : onDeleteExpense
+                }
+              />
+            ))}
+          </div>
+        ))}
+      </section>
     </div>
   );
 }

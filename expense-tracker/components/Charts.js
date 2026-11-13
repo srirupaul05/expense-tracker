@@ -7,64 +7,61 @@ export function DonutChart({ items, total }) {
   let offset = 0;
 
   return (
-    <div className="donut-wrap">
-      <svg
-        viewBox="0 0 120 120"
-        className="donut"
-        role="img"
-        aria-label="Spending by category"
-      >
-        <circle
-          cx="60"
-          cy="60"
-          r={R}
-          fill="none"
-          stroke="#fdeaf0"
-          strokeWidth="16"
-        />
-        {items.map((i) => {
-          const len = (i.amount / total) * C;
-          const el = (
-            <circle
-              key={i.id}
-              cx="60"
-              cy="60"
-              r={R}
-              fill="none"
-              stroke={i.color}
-              strokeWidth="16"
-              strokeDasharray={`${len} ${C - len}`}
-              strokeDashoffset={-offset}
-              transform="rotate(-90 60 60)"
-            />
-          );
-          offset += len;
-          return el;
-        })}
-        <text x="60" y="57" textAnchor="middle" className="donut-label">
-          Spent
-        </text>
-        <text x="60" y="71" textAnchor="middle" className="donut-total">
-          {fmt(total)}
-        </text>
-      </svg>
+    <svg
+      viewBox="0 0 120 120"
+      className="donut"
+      role="img"
+      aria-label="Spending by category"
+    >
+      <circle
+        cx="60"
+        cy="60"
+        r={R}
+        fill="none"
+        stroke="rgba(244,167,190,0.25)"
+        strokeWidth="16"
+      />
+      {items.map((i) => {
+        const len = (i.amount / total) * C;
+        const el = (
+          <circle
+            key={i.id}
+            cx="60"
+            cy="60"
+            r={R}
+            fill="none"
+            stroke={i.color}
+            strokeWidth="16"
+            strokeDasharray={`${len} ${C - len}`}
+            strokeDashoffset={-offset}
+            transform="rotate(-90 60 60)"
+          />
+        );
+        offset += len;
+        return el;
+      })}
+      <text x="60" y="57" textAnchor="middle" className="donut-label">
+        Spent
+      </text>
+      <text x="60" y="71" textAnchor="middle" className="donut-total">
+        {fmt(total)}
+      </text>
+    </svg>
+  );
+}
 
-      <ul className="legend">
-        {items.map((i) => (
-          <li key={i.id}>
-            <span className="dot" style={{ background: i.color }} />
-            <span className="name">
-              {i.emoji} {i.label}
-            </span>
-            <span className="muted">
-              {Math.round((i.amount / total) * 100)}%
-            </span>
-            <b>{fmt(i.amount)}</b>
-            {i.notes.length > 0 && <em>{i.notes.slice(0, 4).join(" · ")}</em>}
-          </li>
-        ))}
-      </ul>
-    </div>
+export function Legend({ items }) {
+  return (
+    <ul className="legend">
+      {items.map((i) => (
+        <li key={i.id}>
+          <span className="dot" style={{ background: i.color }} />
+          <span className="name">{i.label}</span>
+          <b>{fmt(i.amount)}</b>
+          {i.notes.length > 0 && <em>{i.notes.slice(0, 4).join(", ")}</em>}
+        </li>
+      ))}
+    </ul>
   );
 }
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Icon } from "./Icons";
 import { CATEGORIES, catOf, fmt, parseDate, todayStr } from "../lib/utils";
 
 function describe(r) {
@@ -10,8 +11,7 @@ function describe(r) {
   return `Every month on day ${d.getDate()}`;
 }
 
-export default function RecurringManager({ recurring, onAdd, onDelete }) {
-  const [open, setOpen] = useState(false);
+function RecurringSheet({ onAdd, onClose }) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("bills");
   const [note, setNote] = useState("");
@@ -30,125 +30,143 @@ export default function RecurringManager({ recurring, onAdd, onDelete }) {
       freq,
       start,
     });
-    setAmount("");
-    setNote("");
-    setStart(todayStr());
-    setOpen(false);
+    onClose();
   }
 
   return (
-    <div className="card">
-      <h2>🔁 Recurring expenses</h2>
+    <div className="sheet-backdrop" onClick={onClose}>
+      <form
+        className="sheet"
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={submit}
+      >
+        <div className="sheet-head">
+          <h3>New recurring expense</h3>
+          <button
+            type="button"
+            className="iconbtn"
+            aria-label="Close"
+            onClick={onClose}
+          >
+            <Icon name="x" size={22} />
+          </button>
+        </div>
+
+        <div className="amount-row">
+          <span>₹</span>
+          <input
+            type="number"
+            inputMode="decimal"
+            placeholder="0"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="cat-row">
+          {CATEGORIES.map((c) => (
+            <button
+              type="button"
+              key={c.id}
+              className={"chip" + (category === c.id ? " active" : "")}
+              onClick={() => setCategory(c.id)}
+            >
+              <Icon name={c.icon} size={16} />
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+        <input
+          className="text"
+          placeholder="Reason (e.g. room rent, streaming plan)"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          maxLength={80}
+        />
+
+        <div className="seg">
+          <button
+            type="button"
+            className={freq === "monthly" ? "active" : ""}
+            onClick={() => setFreq("monthly")}
+          >
+            Monthly
+          </button>
+          <button
+            type="button"
+            className={freq === "weekly" ? "active" : ""}
+            onClick={() => setFreq("weekly")}
+          >
+            Weekly
+          </button>
+        </div>
+
+        <p className="hint">
+          Starts on this date. The first entry is added on it.
+        </p>
+        <input
+          className="text"
+          type="date"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+        />
+
+        <button className="primary" type="submit">
+          Save recurring expense
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default function RecurringManager({ recurring, onAdd, onDelete }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <section className="glass card">
+      <div className="section-head">
+        <h3>Recurring expenses</h3>
+      </div>
       <p className="hint">
         Rent, subscriptions and other regular payments are added for you
         automatically.
       </p>
 
-      {recurring.length === 0 && !open && (
-        <p className="muted">No recurring expenses yet.</p>
-      )}
-
-      {recurring.map((r) => (
-        <div className="row" key={r.id}>
-          <span className="emoji">{catOf(r.category).emoji}</span>
-          <div className="grow">
-            <div>{r.note || catOf(r.category).label}</div>
-            <small className="muted">{describe(r)}</small>
-          </div>
-          <b className="neg">{fmt(r.amount)}</b>
-          <button
-            className="del"
-            aria-label="Delete"
-            onClick={() => onDelete(r.id)}
-          >
-            ✕
-          </button>
-        </div>
-      ))}
-
-      {!open && (
-        <div style={{ marginTop: 12 }}>
-          <button className="ghost" onClick={() => setOpen(true)}>
-            + Add recurring expense
-          </button>
-        </div>
-      )}
-
-      {open && (
-        <form onSubmit={submit} style={{ marginTop: 12 }}>
-          <div className="amount-row">
-            <span>₹</span>
-            <input
-              type="number"
-              inputMode="decimal"
-              placeholder="0"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="chips">
-            {CATEGORIES.map((c) => (
-              <button
-                type="button"
-                key={c.id}
-                className={"chip" + (category === c.id ? " active" : "")}
-                onClick={() => setCategory(c.id)}
-              >
-                {c.emoji} {c.label}
-              </button>
-            ))}
-          </div>
-
-          <input
-            className="text"
-            placeholder="Reason (e.g. room rent, Netflix)"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            maxLength={80}
-          />
-
-          <div className="tabs">
-            <button
-              type="button"
-              className={freq === "monthly" ? "active" : ""}
-              onClick={() => setFreq("monthly")}
+      {recurring.map((r) => {
+        const c = catOf(r.category);
+        return (
+          <div className="row" key={r.id}>
+            <span
+              className="avatar"
+              style={{ background: c.color + "26", color: c.color }}
             >
-              Monthly
-            </button>
+              <Icon name="repeat" size={18} />
+            </span>
+            <div className="grow">
+              <div className="row-title">{r.note || c.label}</div>
+              <small className="muted">{describe(r)}</small>
+            </div>
+            <b className="neg">{fmt(r.amount)}</b>
             <button
-              type="button"
-              className={freq === "weekly" ? "active" : ""}
-              onClick={() => setFreq("weekly")}
+              className="iconbtn"
+              aria-label="Delete"
+              onClick={() => onDelete(r.id)}
             >
-              Weekly
+              <Icon name="trash" size={18} />
             </button>
           </div>
+        );
+      })}
 
-          <p className="hint">
-            Starts on (the first entry is added on this date):
-          </p>
-          <input
-            className="text"
-            type="date"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-          />
+      <div style={{ marginTop: recurring.length ? 12 : 4 }}>
+        <button className="ghost" onClick={() => setOpen(true)}>
+          Add recurring expense
+        </button>
+      </div>
 
-          <button className="primary" type="submit">
-            Save recurring expense
-          </button>
-          <button
-            type="button"
-            className="link"
-            style={{ width: "100%", marginTop: 8 }}
-            onClick={() => setOpen(false)}
-          >
-            Cancel
-          </button>
-        </form>
-      )}
-    </div>
+      {open && <RecurringSheet onAdd={onAdd} onClose={() => setOpen(false)} />}
+    </section>
   );
 }

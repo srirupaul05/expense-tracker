@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { DonutChart, TrendChart } from "./Charts";
+import { DonutChart, Legend, TrendChart } from "./Charts";
 import {
   addDays,
   dailySeries,
@@ -20,7 +20,7 @@ export default function Summary({ expenses, incomes }) {
     start = weekStart(now);
     end = addDays(start, 7);
     days = 7;
-    label = "This week (Mon–Sun)";
+    label = "This week, Monday to Sunday";
   } else {
     start = new Date(now.getFullYear(), now.getMonth(), 1);
     end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
@@ -36,8 +36,10 @@ export default function Summary({ expenses, incomes }) {
   const series = dailySeries(ex, start, days);
 
   return (
-    <div className="card">
-      <div className="tabs">
+    <div className="view">
+      <h2 className="view-title">Reports</h2>
+
+      <div className="seg">
         <button
           className={tab === "week" ? "active" : ""}
           onClick={() => setTab("week")}
@@ -51,7 +53,7 @@ export default function Summary({ expenses, incomes }) {
           Month
         </button>
       </div>
-      <p className="muted">{label}</p>
+      <p className="muted small period">{label}</p>
 
       <div className="stats">
         <div>
@@ -69,15 +71,22 @@ export default function Summary({ expenses, incomes }) {
       </div>
 
       {s.total === 0 ? (
-        <p className="muted" style={{ marginTop: 14 }}>
-          No spending yet. 🎉
-        </p>
+        <section className="glass card">
+          <p className="muted">No spending in this period yet.</p>
+        </section>
       ) : (
         <>
-          <p className="section-title">Where it went</p>
-          <DonutChart items={s.items} total={s.total} />
-          <p className="section-title">Daily spending</p>
-          <TrendChart series={series} mode={tab} />
+          <section className="glass card">
+            <p className="card-title">Where it went</p>
+            <div className="report-row">
+              <DonutChart items={s.items} total={s.total} />
+              <Legend items={s.items} />
+            </div>
+          </section>
+          <section className="glass card">
+            <p className="card-title">Daily spending</p>
+            <TrendChart series={series} mode={tab} />
+          </section>
         </>
       )}
     </div>
