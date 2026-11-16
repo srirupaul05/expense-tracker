@@ -1,17 +1,17 @@
 # expense-tracker
 An all in one web app for tracking expense
 
-# 💸 Spendly – Expense Tracker
+#  Spendly – Expense Tracker
 
 A simple, mobile-friendly expense tracker. Log what you spend each day, see where your money goes, and get weekly and monthly spending reports with the reason behind every expense.
 
-## 🚀 Live Demo
+## Live Demo
 
 **👉 [https://expense-tracker-nine-ecru-29.vercel.app](https://expense-tracker-nine-ecru-29.vercel.app)**
 
 Open the link on your phone to try it, or install it as an app (see below).
 
-## ✨ Features
+## Features
 
 - **Daily expense entry** – amount, category, reason and date in a few taps
 - **Weekly and monthly summaries** – totals with a category-wise breakdown and the reasons you spent
@@ -21,7 +21,7 @@ Open the link on your phone to try it, or install it as an app (see below).
 - **No login needed** – everything stays private on your phone
 - **Dark mode** – follows your phone's theme
 
-## 📲 Install on your phone
+##  Install on your phone
 
 **Android (Chrome)**
 1. Open the demo link in Chrome
@@ -35,7 +35,7 @@ Then open Spendly from your home screen and tap **Turn on notifications** to get
 
 > On iPhone, notifications only work when the app is opened from the home screen (iOS 16.4 or newer).
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - [Next.js 14](https://nextjs.org/) (App Router) and React 18
 - Plain CSS (no UI libraries)
@@ -43,31 +43,9 @@ Then open Spendly from your home screen and tap **Turn on notifications** to get
 - `localStorage` for on-device data
 - Deployed on [Vercel](https://vercel.com/)
 
-## 📁 Project Structure
-
-```
-expense-tracker/
-├── app/
-│   ├── layout.js          # App shell and metadata
-│   ├── page.js            # Main screen
-│   ├── manifest.js        # PWA manifest
-│   ├── globals.css        # Styles
-│   └── icons/[size]/      # Generated app icons
-├── components/
-│   ├── ExpenseForm.js     # Add expense form
-│   ├── Summary.js         # Weekly / monthly summary
-│   ├── History.js         # Expense list
-│   ├── AlertBanner.js     # Report alerts
-│   └── RegisterSW.js      # Service worker registration
-├── lib/
-│   ├── storage.js         # Save / load data
-│   └── utils.js           # Dates, totals, alerts, notifications
-├── public/
-│   └── sw.js              # Service worker
-└── package.json
-```
 
 
-## 📄 License
+
+## License
 
 Free to use for learning and personal projects.
